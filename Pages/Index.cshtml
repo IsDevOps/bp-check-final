@@ -1,0 +1,74 @@
+﻿@page
+@model BPCalculator.Pages.IndexModel
+
+@{
+    ViewData["Title"] = "BP Category Calculator";
+}
+
+<h4>BP Category Calculator</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="form-group">
+                <label asp-for="BP.Systolic" class="control-label">Systolic</label>
+                <input asp-for="BP.Systolic" class="form-control"/>
+                <span asp-validation-for="BP.Systolic" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="BP.Diastolic" class="control-label">Diastolic</label>
+                <input asp-for="BP.Diastolic" class="form-control" />
+                <span asp-validation-for="BP.Diastolic" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <input type="submit" value="Calculate" class="btn btn-primary" />
+            </div>
+            
+            @if (ModelState.IsValid && Model.BP.Systolic > Model.BP.Diastolic)
+            {
+                <div class="form-group">
+                    <label class="control-label">Blood Pressure Category:</label>
+                    <div class="form-control" style="height: auto; background-color: #f8f9fa;">
+                        <strong>@Model.BP.Category</strong>
+                    </div>
+                </div>
+            }
+        </form>
+    </div>
+    
+    <!-- NEW FEATURE: History Panel -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>📋 Recent Readings</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.History.HistoryCount > 0)
+                {
+                    <div class="list-group">
+                        @foreach (var record in Model.History.GetHistory().Reverse())
+                        {
+                            <div class="list-group-item">
+                                <small class="text-muted">@record.Timestamp.ToString("HH:mm")</small><br />
+                                <strong>@record.Systolic/@record.Diastolic</strong> - @record.Category
+                            </div>
+                        }
+                    </div>
+                    <small class="text-muted mt-2">Showing last @Model.History.HistoryCount reading(s)</small>
+                }
+                else
+                {
+                    <p class="text-muted">No recent readings. Calculate a blood pressure to see history.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
