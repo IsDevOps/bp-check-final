@@ -4,7 +4,7 @@ on:
   push:
     branches: [ master, staging, develop ]
   pull_request:
-    branches: [ develop ]
+    branches: [ staging ]
 
 env:
   DOTNET_VERSION: '9.0.x'
@@ -72,7 +72,7 @@ jobs:
     name: Quality Gate
     runs-on: ubuntu-latest
     needs: build-and-test
-    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/develop'
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/staging'
     
     steps:
     - name: Download test results
@@ -133,7 +133,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     needs: [quality-gate, security-scan]
-    if: github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/staging'
     
     steps:
     - name: Checkout code
